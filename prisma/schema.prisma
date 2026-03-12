@@ -1,0 +1,56 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Warehouse {
+  id    Int    @id @default(autoincrement())
+  name  String
+  areas Area[]
+}
+
+model Area {
+  id          Int       @id @default(autoincrement())
+  name        String
+  warehouseId Int
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  aisles      Aisle[]
+}
+
+model Aisle {
+  id       Int    @id @default(autoincrement())
+  label    String
+  areaId   Int
+  area     Area   @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  posX     Float  @default(0)
+  posY     Float  @default(0)
+  posZ     Float  @default(0)
+  rotation Float  @default(0)
+  type     String @default("double")
+  racks    Rack[]
+}
+
+model Rack {
+  id      Int     @id @default(autoincrement())
+  aisleId Int
+  aisle   Aisle   @relation(fields: [aisleId], references: [id], onDelete: Cascade)
+  posX    Float   @default(0)
+  posY    Float   @default(0)
+  posZ    Float   @default(0)
+  width   Float   @default(1)
+  height  Float   @default(2.5)
+  depth   Float   @default(0.8)
+  side    String  @default("left")
+  shelves Shelf[]
+}
+
+model Shelf {
+  id               Int    @id @default(autoincrement())
+  rackId           Int
+  rack             Rack   @relation(fields: [rackId], references: [id], onDelete: Cascade)
+  heightFromGround Float
+  label            String @default("")
+}
